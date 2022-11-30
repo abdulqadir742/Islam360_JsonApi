@@ -8,10 +8,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.islam360_api.databinding.ActivityMainBinding
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -31,28 +29,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
         getData()
-
-
-        JsonApi.observe(this, Observer {
-            myadapter = MyAdapter(this@MainActivity, it)
-            binding.recycleViewUser.adapter = myadapter
-            binding.recycleViewUser.layoutManager = LinearLayoutManager(this@MainActivity)
-        })
-
     }
     fun getData() {
-
         CoroutineScope(IO).launch {
             var Responce = DataService.Instance.getData()
             var Body = Responce.body()
 
-            if (Body != null) {
-                JsonApi.postValue(Body.data.posts)
-            }
+            withContext(Dispatchers.Main)
+            {
+                if (Body != null) {
+                    JsonApi.postValue(Body.data.posts)
+                }
 
+                JsonApi.observe(this@MainActivity, Observer {
+                    myadapter = MyAdapter(this@MainActivity, it)
+                    binding.recycleViewUser.adapter = myadapter
+                    binding.recycleViewUser.layoutManager = LinearLayoutManager(this@MainActivity)
+                })
+
+            }
 
         }
 

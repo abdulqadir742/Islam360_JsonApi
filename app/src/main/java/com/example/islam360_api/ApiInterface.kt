@@ -8,16 +8,18 @@ import retrofit2.http.GET
 
 interface ApiInterface {
     @GET("NFYsXW")
-   suspend fun getData() : Response<Mydata>
+    suspend fun getData(): Response<Mydata>
 
 }
 
-object DataService{
+object DataService {
 
-    val Instance : ApiInterface
+    val Instance: ApiInterface
 
     init {
-        val retrofit = Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build()
+        val retrofit =
+            Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create())
+                .build()
         Instance = retrofit.create(ApiInterface::class.java)
     }
 }
